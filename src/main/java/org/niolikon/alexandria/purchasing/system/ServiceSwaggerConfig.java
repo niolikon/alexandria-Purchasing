@@ -36,7 +36,7 @@ public class ServiceSwaggerConfig {
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()
-                    .apis(RequestHandlerSelectors.basePackage("org.niolikon.alexandria.inventory"))
+                    .apis(RequestHandlerSelectors.basePackage("org.niolikon.alexandria.purchasing"))
                     .paths(regex("/.*"))
                 .build();
     }
@@ -44,11 +44,11 @@ public class ServiceSwaggerConfig {
     private ApiInfo apiInfo() 
     {
         return new ApiInfoBuilder()
-                .title("Alexandria-Inventory")
-                .description("A RESTFul service for the management of an Inventory")
-                .version("0.0.1-SNAPSHOT")
+                .title("Alexandria-Purchasing")
+                .description("A RESTFul service for the management of the Purchasing")
+                .version("0.0.0-A01")
                 .license("MIT License")
-                .licenseUrl("https://github.com/niolikon/alexandria-Inventory/blob/main/LICENSE")
+                .licenseUrl("https://github.com/niolikon/alexandria-Purchasing/blob/main/LICENSE")
                 .contact(new Contact("Simone Andrea Muscas",  "https://www.linkedin.com/in/simoneandreamuscas/", 
                         "simoneandrea.muscas@gmail.com"))
                 .build();
