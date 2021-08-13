@@ -67,6 +67,27 @@ public class OrderController {
 		return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
 	}
 	
+	@GetMapping("/history")
+    @ResponseBody
+    @ApiOperation(
+            value = "Read history of user orders", notes = "Returns Order data in JSON", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The Orders have been fetched"),
+            @ApiResponse(code = 401, message = "You are not logged in"),
+            @ApiResponse(code = 403, message = "You are not authorized to access this resource"),
+            @ApiResponse(code = 404, message = "No Orders are present in the repository")})
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "http://localhost:3100", "http://localhost:3200"})
+    public ResponseEntity<Page<OrderView>> getUserOrders(@PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable, Principal user) {
+		Set<String> userRoles = getUserRoles();
+		
+		if (userRoles.contains("ROLE_USER")) {
+			Page<OrderView> result = service.findUserOrders(user.getName(), pageable);
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+    }
+	
 	@GetMapping
     @ResponseBody
     @ApiOperation(
@@ -77,11 +98,11 @@ public class OrderController {
             @ApiResponse(code = 403, message = "You are not authorized to access this resource"),
             @ApiResponse(code = 404, message = "No Orders are present in the repository")})
     @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "http://localhost:3100", "http://localhost:3200"})
-    public ResponseEntity<Page<OrderView>> getAllOrders(@PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-		Page<OrderView> result = service.findAllOrders(pageable);
+    public ResponseEntity<Page<OrderView>> getAllOrders(@PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable, Principal user) {
 		Set<String> userRoles = getUserRoles();
 		
 		if (userRoles.contains("ROLE_ADMIN") || userRoles.contains("ROLE_OPERATOR")) {
+			Page<OrderView> result = service.findAllOrders(pageable);
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 		
@@ -99,11 +120,11 @@ public class OrderController {
             @ApiResponse(code = 403, message = "You are not authorized to access this resource")})
     @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "http://localhost:3100"})
     public ResponseEntity<OrderView> create(@ApiParam("The input Order data") @RequestBody @Valid OrderRequest req, Principal user) {
-    	if (user == null) {
-    		return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+    	if (user != null) {
+        	return new ResponseEntity<>(service.create(req, user.getName()), HttpStatus.OK);
     	}
-    	
-    	return new ResponseEntity<>(service.create(req, user.getName()), HttpStatus.OK);
+
+		return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }
     
     @DeleteMapping("/{id}")
@@ -139,10 +160,10 @@ public class OrderController {
     @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "http://localhost:3100", "http://localhost:3200"})
 	public ResponseEntity<OrderView> updateOrder(@ApiParam("The ID of the Product") @PathVariable String id, 
 			@RequestBody @Valid OrderRequest req) {
-    	Order Order = service.findOrderOrThrow(id);
 		Set<String> userRoles = getUserRoles();
 		
 		if (userRoles.contains("ROLE_ADMIN") || userRoles.contains("ROLE_OPERATOR")) {
+	    	Order Order = service.findOrderOrThrow(id);
 			return new ResponseEntity<>(service.update(Order, req), HttpStatus.OK);
 		}
 		

@@ -51,6 +51,15 @@ public class OrderService {
 		return new PageImpl<>(orderViews, pageable, orders.getTotalElements());
 	}
 	
+	public Page<OrderView> findUserOrders(String username, Pageable pageable) {
+		Page<Order> orders = orderRepo.findByUsername(username, pageable);
+		List<OrderView> orderViews = orders.stream()
+				.map( order -> orderConverter.convert(order))
+				.collect(Collectors.toList());
+		
+		return new PageImpl<>(orderViews, pageable, orders.getTotalElements());
+	}
+	
 	public OrderView create(OrderRequest req, String username) {
 		Order order = new Order();
 		order.setUsername(username);

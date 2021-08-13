@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.niolikon.alexandria</groupId>
 	<artifactId>Purchasing</artifactId>
-	<version>0.0.0-A01</version>
+	<version>0.0.0-A02</version>
 	<name>alexandria-Purchasing</name>
 	<description>Spring Purchasing Management Backend (Case Study)</description>
 	<properties>
