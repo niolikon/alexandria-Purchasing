@@ -41,7 +41,7 @@ public class Order {
 	@Id
 	private String id;
 	
-    @Indexed(unique=true)
+    @Indexed
 	private String username;
 
 	private List<Entry> entries;
